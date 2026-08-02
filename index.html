@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Friendship Day, Bubu 🌷</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Dancing+Script:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --blush:#F8D7DA;
+    --blush-deep:#F3BFC6;
+    --cream:#FFF9F6;
+    --white:#FFFFFF;
+    --purple:#8B5FBF;
+    --purple-deep:#5B3A8E;
+    --purple-glow:rgba(139,95,191,0.35);
+    --ink:#2A2130;
+    --font-display:'Playfair Display', serif;
+    --font-script:'Dancing Script', cursive;
+    --font-body:'Poppins', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:linear-gradient(180deg,var(--cream) 0%, var(--blush) 50%, var(--cream) 100%);
+    color:var(--ink);
+    font-family:var(--font-body);
+    overflow-x:hidden;
+    cursor:none;
+  }
+  ::selection{background:var(--purple-glow);}
+
+  /* ---------- custom cursor ---------- */
+  #cursor-glow{
+    position:fixed;width:26px;height:26px;border-radius:50%;
+    background:radial-gradient(circle, var(--purple-glow) 0%, transparent 70%);
+    pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+    transition:width .25s ease, height .25s ease;
+    mix-blend-mode:multiply;
+  }
+  #cursor-dot{
+    position:fixed;width:6px;height:6px;border-radius:50%;
+    background:var(--purple-deep);pointer-events:none;z-index:10000;
+    transform:translate(-50%,-50%);
+  }
+  @media (max-width:900px){
+    body{cursor:auto;}
+    #cursor-glow,#cursor-dot{display:none;}
+  }
+
+  section{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6vh 6vw;overflow:hidden;}
+
+  /* ---------- floating petals (ambient, all sections) ---------- */
+  .petal-field{position:fixed;inset:0;pointer-events:none;z-index:1;}
+  .petal{position:absolute;top:-5%;font-size:18px;opacity:.55;will-change:transform;filter:drop-shadow(0 2px 3px rgba(0,0,0,.05));}
+
+  /* ---------- loader ---------- */
+  #loader{
+    position:fixed;inset:0;z-index:5000;background:linear-gradient(180deg,var(--cream),var(--blush));
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  }
+  #loader svg{width:120px;height:120px;}
+  .loader-text{font-family:var(--font-script);font-size:1.6rem;color:var(--purple-deep);letter-spacing:.5px;text-align:center;min-height:2.4rem;}
+
+  /* ---------- shared type styles ---------- */
+  .eyebrow{font-family:var(--font-script);font-size:1.3rem;color:var(--purple-deep);margin-bottom:.25rem;}
+  h1,h2{font-family:var(--font-display);font-weight:600;letter-spacing:.5px;}
+  h1{font-size:clamp(2.4rem,6vw,4.2rem);}
+  h2{font-size:clamp(1.9rem,4vw,2.8rem);}
+  .lede{font-family:var(--font-script);font-size:clamp(1.3rem,2.4vw,1.7rem);color:#5c4a66;max-width:640px;margin:1.2rem auto 0;line-height:1.5;}
+
+  .btn{
+    position:relative;margin-top:2.4rem;padding:1rem 2.6rem;border:none;border-radius:100px;
+    background:linear-gradient(120deg,var(--purple),var(--purple-deep));color:var(--white);
+    font-family:var(--font-body);font-size:1rem;font-weight:500;letter-spacing:.3px;
+    cursor:none;box-shadow:0 8px 30px var(--purple-glow);overflow:hidden;
+  }
+  .btn:hover{box-shadow:0 10px 40px var(--purple-glow);}
+
+  /* ---------- hero ---------- */
+  #hero .names{font-family:var(--font-display);font-style:italic;color:var(--purple-deep);}
+  #hero .nickname{font-family:var(--font-script);font-size:1.6rem;color:#8a7391;}
+
+  /* ---------- envelope ---------- */
+  #envelope-wrap{width:min(420px,80vw);aspect-ratio:1.5/1;position:relative;cursor:none;}
+  .envelope-body{position:absolute;inset:0;background:linear-gradient(160deg,#fff,var(--blush));border-radius:10px;box-shadow:0 20px 60px rgba(91,58,142,.18);}
+  .envelope-flap{position:absolute;top:0;left:0;width:100%;height:52%;background:linear-gradient(160deg,var(--blush-deep),var(--blush));clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;border-radius:10px 10px 0 0;transition:transform 1s cubic-bezier(.6,.05,.2,1);}
+  .seal{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--purple),var(--purple-deep));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-script);font-size:1.4rem;box-shadow:0 6px 20px rgba(91,58,142,.4);z-index:5;}
+  #envelope-wrap.open .envelope-flap{transform:rotateX(180deg);}
+  #envelope-wrap.open .seal{opacity:0;transform:translate(-50%,-50%) scale(.3);transition:opacity .3s,transform .3s;}
+  .hint{margin-top:2rem;font-family:var(--font-script);font-size:1.1rem;color:#8a7391;}
+
+  /* ---------- letter ---------- */
+  #letter-paper{max-width:600px;background:rgba(255,255,255,.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.6);border-radius:18px;padding:3rem 2.6rem;box-shadow:0 25px 60px rgba(91,58,142,.12);display:none;}
+  #letter-paper.show{display:block;}
+  #letter-paper p{font-family:var(--font-script);font-size:1.35rem;line-height:1.85;color:var(--ink);opacity:0;}
+
+  /* ---------- glass cards ---------- */
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.6rem;max-width:1000px;width:100%;margin-top:2.5rem;}
+  .glass-card{background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.7);border-radius:20px;padding:2rem 1.6rem;text-align:center;transition:transform .4s ease, box-shadow .4s ease;box-shadow:0 10px 30px rgba(91,58,142,.08);}
+  .glass-card:hover{transform:translateY(-8px) rotateX(4deg);box-shadow:0 20px 45px var(--purple-glow);}
+  .glass-card .icon{font-size:2rem;margin-bottom:.7rem;}
+  .glass-card h3{font-family:var(--font-display);font-size:1.15rem;margin-bottom:.5rem;color:var(--purple-deep);}
+  .glass-card p{font-size:.92rem;color:#5c4a66;line-height:1.5;}
+
+  /* ---------- memory wall ---------- */
+  .polaroid-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.8rem;max-width:900px;margin-top:2.5rem;}
+  .polaroid{background:#fff;padding:.7rem .7rem 1.4rem;border-radius:6px;box-shadow:0 12px 30px rgba(0,0,0,.1);transform:rotate(var(--r,-2deg));transition:transform .3s ease;}
+  .polaroid:hover{transform:rotate(0deg) translateY(-6px) scale(1.03);}
+  .polaroid .frame{width:100%;aspect-ratio:1/1;border-radius:2px;background:linear-gradient(135deg,var(--blush),#e7cdd6);display:flex;align-items:center;justify-content:center;font-size:2rem;}
+  .polaroid figcaption{margin-top:.7rem;font-family:var(--font-script);font-size:1.05rem;text-align:center;color:#5c4a66;}
+
+  /* ---------- garden ---------- */
+  .garden-field{display:flex;flex-wrap:wrap;justify-content:center;gap:1.4rem;max-width:820px;margin-top:2.5rem;}
+  .tulip-btn{background:none;border:none;cursor:none;font-size:2.6rem;transition:transform .3s ease;filter:drop-shadow(0 4px 6px rgba(91,58,142,.15));}
+  .tulip-btn:hover{transform:translateY(-6px) scale(1.15);}
+  #garden-quote{margin-top:2rem;font-family:var(--font-script);font-size:1.4rem;color:var(--purple-deep);min-height:2.4rem;max-width:560px;text-align:center;}
+
+  /* ---------- heart ---------- */
+  #heart-icon{font-size:6rem;cursor:none;filter:drop-shadow(0 10px 25px var(--purple-glow));transition:transform .15s ease;}
+  #heart-msg{margin-top:2rem;font-family:var(--font-script);font-size:1.5rem;color:var(--purple-deep);min-height:2.4rem;text-align:center;max-width:560px;}
+
+  /* ---------- smile meter ---------- */
+  #smile-slider{width:min(480px,80vw);height:10px;-webkit-appearance:none;appearance:none;border-radius:10px;background:linear-gradient(90deg,var(--blush-deep),var(--purple));cursor:none;}
+  #smile-slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:4px solid var(--purple-deep);cursor:none;}
+  #smile-readout{margin-top:1.6rem;font-family:var(--font-display);font-size:1.6rem;color:var(--purple-deep);}
+
+  /* ---------- wish tree ---------- */
+  .tree-wrap{position:relative;width:min(420px,80vw);height:380px;}
+  .leaf{position:absolute;font-size:1.8rem;cursor:none;transition:transform .25s ease;}
+  .leaf:hover{transform:scale(1.3) rotate(-8deg);}
+  #wish-msg{margin-top:1.4rem;font-family:var(--font-script);font-size:1.3rem;color:var(--purple-deep);min-height:2.2rem;text-align:center;max-width:520px;}
+
+  /* ---------- gift box ---------- */
+  #gift-box{font-size:5rem;cursor:none;transition:transform .3s ease;}
+  #gift-box:hover{transform:scale(1.08);}
+  #gift-msg{margin-top:2rem;font-family:var(--font-script);font-size:1.5rem;color:var(--purple-deep);opacity:0;text-align:center;max-width:520px;}
+
+  /* ---------- final + ending ---------- */
+  #final-letter p{font-family:var(--font-script);font-size:1.4rem;line-height:1.9;color:var(--ink);text-align:center;opacity:0;}
+  #ending{background:radial-gradient(ellipse at 50% 30%,var(--blush) 0%,var(--cream) 70%);}
+  #ending h2{font-family:var(--font-script);font-weight:500;font-size:clamp(1.6rem,3.4vw,2.4rem);text-align:center;color:var(--purple-deep);max-width:600px;line-height:1.5;}
+  .made-with{margin-top:2.5rem;font-size:.9rem;letter-spacing:1px;color:#a08aab;}
+
+  .reveal{opacity:0;transform:translateY(30px);}
+
+  @media (prefers-reduced-motion:reduce){
+    * {animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor-glow"></div>
+<div id="cursor-dot"></div>
+<div class="petal-field" id="petal-field"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <svg viewBox="0 0 100 100" id="loader-tulip">
+    <path id="tulip-path" d="M50 90 C50 90 50 55 50 55 C30 55 20 35 30 15 C35 25 42 32 50 32 C58 32 65 25 70 15 C80 35 70 55 50 55" fill="none" stroke="#5B3A8E" stroke-width="2.4" stroke-linecap="round"/>
+  </svg>
+  <div class="loader-text" id="loader-text">Creating something special…</div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="eyebrow reveal">Happy Friendship Day</div>
+  <h1 class="names reveal">Mehdiya Adeen</h1>
+  <div class="nickname reveal">( Bubu )</div>
+  <p class="lede reveal">"Some people quietly become one of the happiest parts of our lives."</p>
+  <button class="btn reveal" id="open-heart-btn">Open My Heart 🌷</button>
+</section>
+
+<!-- ENVELOPE -->
+<section id="envelope-section">
+  <h2 class="reveal">A little something for you</h2>
+  <div id="envelope-wrap" class="reveal" style="margin-top:2.5rem;">
+    <div class="envelope-body"></div>
+    <div class="envelope-flap"></div>
+    <div class="seal" id="seal-btn">🌷</div>
+  </div>
+  <div class="hint reveal">click the seal</div>
+</section>
+
+<!-- LETTER -->
+<section id="letter-section">
+  <div id="letter-paper">
+    <p>Dear Bubu,</p>
+    <p>Happy Friendship Day!</p>
+    <p>Sometimes life introduces us to people we never expected to become so important.</p>
+    <p>Thank you for every laugh. Every random conversation. Every silly moment. Every memory.</p>
+    <p>Thank you for making ordinary days feel brighter.</p>
+    <p>Never lose your kindness — the world genuinely needs more people like you.</p>
+  </div>
+</section>
+
+<!-- WHY YOU'RE SPECIAL -->
+<section id="special-section">
+  <div class="eyebrow reveal">Why You're Special</div>
+  <h2 class="reveal">A few things worth saying out loud</h2>
+  <div class="cards-grid">
+    <div class="glass-card reveal"><div class="icon">🌷</div><h3>Your Smile</h3><p>Some smiles brighten a room. Yours quietly brightens people's hearts.</p></div>
+    <div class="glass-card reveal"><div class="icon">🌸</div><h3>Your Kindness</h3><p>Kindness isn't something you perform. It naturally exists within you.</p></div>
+    <div class="glass-card reveal"><div class="icon">✨</div><h3>Your Heart</h3><p>You care for people in ways they may never even notice. Never lose that.</p></div>
+    <div class="glass-card reveal"><div class="icon">💜</div><h3>Your Presence</h3><p>Some people make life easier simply by being around. You're one of them.</p></div>
+    <div class="glass-card reveal"><div class="icon">🤍</div><h3>Your Friendship</h3><p>One of the best gifts life has given me is a friend like you.</p></div>
+  </div>
+</section>
+
+<!-- MEMORY WALL -->
+<section id="memory-section">
+  <div class="eyebrow reveal">Memory Wall</div>
+  <h2 class="reveal">Some moments never fade</h2>
+  <div class="polaroid-grid">
+    <figure class="polaroid reveal" style="--r:-3deg;"><div class="frame">📷</div><figcaption>Some memories never fade.</figcaption></figure>
+    <figure class="polaroid reveal" style="--r:2deg;"><div class="frame">📷</div><figcaption>The smallest moments become the biggest memories.</figcaption></figure>
+    <figure class="polaroid reveal" style="--r:-1deg;"><div class="frame">📷</div><figcaption>The best conversations never feel forced.</figcaption></figure>
+    <figure class="polaroid reveal" style="--r:3deg;"><div class="frame">📷</div><figcaption>Thank you for making ordinary moments unforgettable.</figcaption></figure>
+  </div>
+  <p class="hint">(placeholder frames — drop your real photos in here later)</p>
+</section>
+
+<!-- GARDEN -->
+<section id="garden-section">
+  <div class="eyebrow reveal">The Flower Garden</div>
+  <h2 class="reveal">Click a tulip</h2>
+  <div class="garden-field" id="garden-field"></div>
+  <div id="garden-quote"></div>
+</section>
+
+<!-- HEART -->
+<section id="heart-section">
+  <div class="eyebrow reveal">A Crystal Heart</div>
+  <h2 class="reveal">Tap it, whenever you need a smile</h2>
+  <div id="heart-icon">💜</div>
+  <div id="heart-msg"></div>
+</section>
+
+<!-- SMILE METER -->
+<section id="smile-section">
+  <h2 class="reveal">How amazing is Bubu?</h2>
+  <input type="range" min="0" max="100" value="50" id="smile-slider" style="margin-top:2rem;">
+  <div id="smile-readout">Expected nothing less ❤️</div>
+</section>
+
+<!-- WISH TREE -->
+<section id="tree-section">
+  <div class="eyebrow reveal">The Wish Tree</div>
+  <h2 class="reveal">Click a leaf</h2>
+  <div class="tree-wrap" id="tree-wrap">
+    <div style="position:absolute;bottom:0;left:50%;width:14px;height:140px;background:linear-gradient(180deg,#a98a6b,#8a6d52);transform:translateX(-50%);border-radius:6px;"></div>
+  </div>
+  <div id="wish-msg"></div>
+</section>
+
+<!-- GIFT BOX -->
+<section id="gift-section">
+  <div class="eyebrow reveal">One More Surprise</div>
+  <h2 class="reveal">Untie the ribbon</h2>
+  <div id="gift-box">🎁</div>
+  <div id="gift-msg">You deserve every beautiful thing life has to offer.</div>
+</section>
+
+<!-- FINAL LETTER -->
+<section id="final-section">
+  <div id="final-letter">
+    <p>Happy Friendship Day, Mehdiya Adeen ❤️</p>
+    <p>Thank you for every smile. Every laugh. Every conversation. Every random memory.</p>
+    <p>Some friendships don't need grand reasons — they simply become one of the happiest parts of life.</p>
+    <p>I'm really grateful that one of those friendships is ours.</p>
+    <p>Keep smiling. Keep chasing your dreams. Keep being the amazing person you already are.</p>
+    <p>Happy Friendship Day once again, Bubu 🌷</p>
+  </div>
+</section>
+
+<!-- ENDING -->
+<section id="ending">
+  <h2>"Some friendships become memories.<br>The rare ones become blessings."</h2>
+  <div class="made-with">MADE WITH GRATITUDE ❤️</div>
+</section>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ---------- custom cursor ---------- */
+const glow = document.getElementById('cursor-glow');
+const dot = document.getElementById('cursor-dot');
+window.addEventListener('mousemove', e=>{
+  gsap.to(glow,{x:e.clientX,y:e.clientY,duration:.5,ease:'power3.out'});
+  gsap.to(dot,{x:e.clientX,y:e.clientY,duration:.1});
+});
+document.querySelectorAll('button,[id$="-btn"],#heart-icon,#gift-box,.tulip-btn,.leaf,#smile-slider').forEach(el=>{
+  el.addEventListener('mouseenter',()=>gsap.to(glow,{width:50,height:50,duration:.3}));
+  el.addEventListener('mouseleave',()=>gsap.to(glow,{width:26,height:26,duration:.3}));
+});
+
+/* ---------- ambient petals ---------- */
+const petalEmoji = ['🌸','🌷','🌼'];
+const field = document.getElementById('petal-field');
+function spawnPetal(){
+  const p = document.createElement('div');
+  p.className='petal';
+  p.textContent = petalEmoji[Math.floor(Math.random()*petalEmoji.length)];
+  p.style.left = Math.random()*100+'vw';
+  p.style.fontSize = (12+Math.random()*14)+'px';
+  field.appendChild(p);
+  gsap.to(p,{
+    y:'110vh', x:'+='+(Math.random()*160-80),
+    rotation:Math.random()*360,
+    duration:10+Math.random()*10,
+    ease:'none',
+    onComplete:()=>p.remove()
+  });
+}
+setInterval(spawnPetal, 900);
+
+/* ---------- loader ---------- */
+window.addEventListener('load',()=>{
+  const tulipPath = document.getElementById('tulip-path');
+  const len = tulipPath.getTotalLength();
+  tulipPath.style.strokeDasharray = len;
+  tulipPath.style.strokeDashoffset = len;
+  const tl = gsap.timeline({defaults:{ease:'power2.out'}});
+  tl.to(tulipPath,{strokeDashoffset:0,duration:1.6})
+    .to('#loader-text',{opacity:0,duration:.3},'+=.3')
+    .call(()=>{document.getElementById('loader-text').textContent='For someone truly wonderful…';})
+    .to('#loader-text',{opacity:1,duration:.4})
+    .to('#loader',{opacity:0,duration:.8,delay:.8,onComplete:()=>{
+        document.getElementById('loader').style.display='none';
+        gsap.to('#hero .reveal',{opacity:1,y:0,duration:1,stagger:.15,ease:'power2.out'});
+    }});
+});
+
+/* ---------- scroll reveals ---------- */
+gsap.utils.toArray('.reveal').forEach(el=>{
+  if(el.closest('#hero')) return; // handled by loader timeline
+  gsap.to(el,{
+    opacity:1,y:0,duration:.9,ease:'power2.out',
+    scrollTrigger:{trigger:el,start:'top 85%'}
+  });
+});
+
+/* ---------- open heart button scrolls down ---------- */
+document.getElementById('open-heart-btn').addEventListener('click',()=>{
+  document.getElementById('envelope-section').scrollIntoView({behavior:'smooth'});
+});
+
+/* ---------- envelope / letter ---------- */
+document.getElementById('seal-btn').addEventListener('click',function(){
+  document.getElementById('envelope-wrap').classList.add('open');
+  setTimeout(()=>{
+    const paper = document.getElementById('letter-paper');
+    paper.classList.add('show');
+    gsap.to(paper.querySelectorAll('p'),{opacity:1,y:0,duration:.8,stagger:.5,ease:'power2.out'});
+    document.getElementById('letter-section').scrollIntoView({behavior:'smooth'});
+  },900);
+});
+
+/* ---------- flower garden ---------- */
+const gardenQuotes = [
+  "A good friend remembers your story. A best friend helped you write it.",
+  "You don't perform kindness — you just are it.",
+  "Some people find peace in silence. I find it in our conversations.",
+  "Friendship like ours doesn't fade — it just gets more comfortable.",
+  "You make the ordinary feel worth remembering.",
+  "Not everyone gets a friend who actually listens. I did.",
+  "Distance means so little when someone means so much.",
+  "You've seen me at my most ordinary and never once made it feel small.",
+  "A rare kind of friend: the one who stays.",
+  "Some friendships are loud. Ours is steady — and that's better.",
+  "Thank you for the laughter that needed no explanation.",
+  "You turned coincidence into one of the best parts of my life.",
+  "Real friendship isn't about being there every day. It's about being real when you are.",
+  "You've never made me feel like I was too much or not enough.",
+  "The best part of some days is simply talking to you.",
+  "A friend like you makes the world feel a little less complicated.",
+  "You give advice like someone who actually cares about the outcome.",
+  "I don't say it enough, but I notice everything you do.",
+  "Some people are chapters. You're a thread through the whole book.",
+  "You make honesty feel like a gift, not a risk."
+];
+let gardenIdx = [];
+function shuffleGarden(){ gardenIdx = [...Array(gardenQuotes.length).keys()].sort(()=>Math.random()-.5); }
+shuffleGarden();
+const gardenField = document.getElementById('garden-field');
+for(let i=0;i<14;i++){
+  const b = document.createElement('button');
+  b.className='tulip-btn';
+  b.textContent='🌷';
+  gardenField.appendChild(b);
+  b.addEventListener('click',()=>{
+    gsap.fromTo(b,{scale:1},{scale:1.4,duration:.2,yoyo:true,repeat:1});
+    if(!gardenIdx.length) shuffleGarden();
+    const q = gardenQuotes[gardenIdx.pop()];
+    const el = document.getElementById('garden-quote');
+    gsap.to(el,{opacity:0,duration:.2,onComplete:()=>{el.textContent=q;gsap.to(el,{opacity:1,duration:.4});}});
+  });
+}
+
+/* ---------- crystal heart ---------- */
+const heartMsgs = [
+  "You're appreciated more than you know.",
+  "Never stop smiling — it suits you.",
+  "You make life lighter just by being in it.",
+  "You deserve endless happiness.",
+  "You're genuinely wonderful, and don't forget it.",
+  "Thank you for being exactly who you are.",
+  "Your friendship is one of the good parts of my story.",
+  "You give more than you realize.",
+  "Some days are better simply because you were part of them.",
+  "You're the kind of friend people hope to find.",
+  "The world is softer because you're in it.",
+  "You've never once made kindness look hard.",
+  "Being your friend has taught me what real support looks like.",
+  "You deserve every bit of good coming your way.",
+  "Your presence is a quiet kind of gift."
+];
+let heartIdx = [];
+function shuffleHeart(){ heartIdx = [...Array(heartMsgs.length).keys()].sort(()=>Math.random()-.5); }
+shuffleHeart();
+document.getElementById('heart-icon').addEventListener('click',function(){
+  gsap.fromTo(this,{scale:1},{scale:1.25,duration:.15,yoyo:true,repeat:1});
+  if(!heartIdx.length) shuffleHeart();
+  const q = heartMsgs[heartIdx.pop()];
+  const el = document.getElementById('heart-msg');
+  gsap.to(el,{opacity:0,duration:.2,onComplete:()=>{el.textContent=q;gsap.to(el,{opacity:1,duration:.5});}});
+});
+
+/* ---------- smile meter ---------- */
+const slider = document.getElementById('smile-slider');
+const readout = document.getElementById('smile-readout');
+slider.addEventListener('change',()=>{
+  gsap.to(slider,{duration:.6,ease:'elastic.out(1,.4)',onUpdate:function(){}, });
+  slider.value = 100;
+  readout.textContent = 'Infinity / 10 — expected nothing less ❤️';
+});
+
+/* ---------- wish tree ---------- */
+const wishes = [
+  "May every dream you have come true.",
+  "May happiness always find you first.",
+  "May your smile never fade.",
+  "May your heart always stay this beautiful.",
+  "May the people around you know how lucky they are.",
+  "May every hard season be short and every good one long.",
+  "May you always have someone in your corner — you have me.",
+  "May you never doubt how loved you are."
+];
+const treeWrap = document.getElementById('tree-wrap');
+const leafPositions = [
+  [30,60],[55,40],[75,70],[20,110],[65,120],[45,90],[85,150],[15,170]
+];
+leafPositions.forEach((pos,i)=>{
+  const l = document.createElement('div');
+  l.className='leaf';
+  l.textContent='🍃';
+  l.style.left = pos[0]+'px';
+  l.style.top = pos[1]+'px';
+  treeWrap.appendChild(l);
+  l.addEventListener('click',()=>{
+    gsap.fromTo(l,{scale:1},{scale:1.3,duration:.15,yoyo:true,repeat:1});
+    const el = document.getElementById('wish-msg');
+    gsap.to(el,{opacity:0,duration:.2,onComplete:()=>{el.textContent=wishes[i%wishes.length];gsap.to(el,{opacity:1,duration:.5});}});
+  });
+});
+
+/* ---------- gift box ---------- */
+document.getElementById('gift-box').addEventListener('click',function(){
+  gsap.to(this,{scale:1.3,rotation:8,duration:.3,yoyo:true,repeat:1});
+  gsap.to('#gift-msg',{opacity:1,duration:.7,delay:.2});
+  for(let i=0;i<24;i++) spawnPetal();
+});
+
+/* ---------- final letter reveal ---------- */
+gsap.to('#final-letter p',{
+  opacity:1,duration:.8,stagger:.4,ease:'power2.out',
+  scrollTrigger:{trigger:'#final-letter',start:'top 70%'}
+});
+</script>
+</body>
+</html>
